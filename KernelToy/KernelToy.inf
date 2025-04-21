@@ -1,0 +1,62 @@
+;
+; KernelToy.inf
+;
+
+[Version]
+Signature   = "$WINDOWS NT$"
+Class       = System ; TODO: specify appropriate Class
+ClassGuid   = {4d36e97d-e325-11ce-bfc1-08002be10318} ; TODO: specify appropriate ClassGuid
+Provider    = %ManufacturerName%
+CatalogFile = KernelToy.cat
+DriverVer   = ; TODO: set DriverVer in stampinf property pages
+PnpLockdown = 1
+
+[DestinationDirs]
+DefaultDestDir = 13
+
+[SourceDisksNames]
+1 = %DiskName%,,,""
+
+[SourceDisksFiles]
+KernelToy.sys = 1,,
+
+;*****************************************
+; Install Section
+;*****************************************
+
+[Manufacturer]
+%ManufacturerName% = Standard,NT$ARCH$.10.0...16299 ; %13% support introduced in build 16299
+
+[Standard.NT$ARCH$.10.0...16299]
+%KernelToy.DeviceDesc% = KernelToy_Device, Root\KernelToy ; TODO: edit hw-id
+
+[KernelToy_Device.NT]
+CopyFiles = File_Copy
+
+[File_Copy]
+KernelToy.sys
+
+;-------------- Service installation
+[KernelToy_Device.NT.Services]
+AddService = KernelToy,%SPSVCINST_ASSOCSERVICE%, KernelToy_Service_Inst
+
+; -------------- KernelToy driver install sections
+[KernelToy_Service_Inst]
+DisplayName    = %KernelToy.SVCDESC%
+ServiceType    = 1               ; SERVICE_KERNEL_DRIVER
+StartType      = 3               ; SERVICE_DEMAND_START
+ErrorControl   = 1               ; SERVICE_ERROR_NORMAL
+ServiceBinary  = %13%\KernelToy.sys
+
+[KernelToy_Device.NT.Wdf]
+KmdfService = KernelToy, KernelToy_wdfsect
+
+[KernelToy_wdfsect]
+KmdfLibraryVersion = $KMDFVERSION$
+
+[Strings]
+SPSVCINST_ASSOCSERVICE = 0x00000002
+ManufacturerName = "<Your manufacturer name>" ;TODO: Replace with your manufacturer name
+DiskName = "KernelToy Installation Disk"
+KernelToy.DeviceDesc = "KernelToy Device"
+KernelToy.SVCDESC = "KernelToy Service"
