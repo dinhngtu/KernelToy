@@ -1,9 +1,6 @@
-#include <system_error>
-#include <cstdio>
-#include <vector>
-#include <wil/filesystem.h>
-#include <vmgenerationcounter.h>
+#include "stdafx.h"
 #include "KernelToyIoctl.h"
+#include "Driver.hpp"
 
 static const std::vector<PCWSTR> HalPlatformTimerSources = {
     L"HalPlatformTimerNotSpecified",
@@ -23,6 +20,8 @@ static const std::vector<PCWSTR> HalPlatformTimerSources = {
 };
 
 static void do_read_halpti() {
+    ensure_driver_loaded();
+
     auto handle = wil::open_file(L"\\\\.\\GLOBALROOT\\Device\\KernelToy", GENERIC_READ, FILE_SHARE_DELETE);
 
     KERNELTOY_HAL_INFORMATION_REQUEST halRequest = { KrtHalPlatformTimerInformationV1 };
@@ -76,6 +75,8 @@ static void do_read_vmgen() {
 }
 
 int wmain(int argc, wchar_t** argv) {
+    int ret = 0;
+
     try {
         if (argc != 2) {
             throw std::exception("unknown command");
@@ -91,11 +92,21 @@ int wmain(int argc, wchar_t** argv) {
             throw std::exception("unknown command");
         }
 
-        return 0;
+        ret = 0;
     }
     catch (const std::exception& ex) {
         wprintf(L"%S\n", ex.what());
 
-        return 1;
+        ret = 1;
     }
+
+    try {
+        ensure_driver_unloaded();
+    }
+    catch (const std::exception& ex2) {
+        wprintf(L"Driver unload error: %S\n", ex2.what());
+        ret = 2;
+    }
+
+    return ret;
 }
