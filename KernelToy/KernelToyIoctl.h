@@ -1,3 +1,5 @@
+// SPDX-License-Identifier: GPL-3.0-only
+
 #pragma once
 
 #define KERNELTOY_DEVICE_TYPE 0x8115

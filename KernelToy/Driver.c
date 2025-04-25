@@ -1,3 +1,5 @@
+// SPDX-License-Identifier: GPL-3.0-only
+
 #include "stdafx.h"
 #include "KrtDecl.h"
 #include "Driver.h"
