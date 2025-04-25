@@ -2,6 +2,8 @@
 
 #include "stdafx.h"
 
+// https://www.geoffchappell.com/studies/windows/km/ntoskrnl/inc/ntos/hal/hal_platform_timer_source.htm
+
 enum _HAL_PLATFORM_TIMER_SOURCE {
     HalPlatformTimerNotSpecified,
     HalPlatformTimer8254,
@@ -20,6 +22,9 @@ enum _HAL_PLATFORM_TIMER_SOURCE {
 };
 
 typedef enum _HAL_PLATFORM_TIMER_SOURCE HAL_PLATFORM_TIMER_SOURCE;
+
+// deduced from valid output size, along with names from
+// https://www.geoffchappell.com/studies/windows/km/ntoskrnl/inc/ntos/hal/hal_platform_timer_source.htm
 
 typedef struct _HAL_PLATFORM_TIMER_INFORMATION_V1 {
     ULONG Version;
