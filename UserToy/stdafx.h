@@ -8,6 +8,7 @@
 #include <thread>
 #include <filesystem>
 #include <random>
+#include <mutex>
 
 #include <Windows.h>
 #include <winsvc.h>
