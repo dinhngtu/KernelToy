@@ -1,6 +1,7 @@
 // SPDX-License-Identifier: GPL-3.0-only
 
 #include "stdafx.h"
+#include <intrin.h>
 #include "KernelToyIoctl.h"
 #include "Driver.hpp"
 
@@ -76,6 +77,23 @@ static void do_read_vmgen() {
     wprintf(L"GenerationCount Low = 0x%llx High = 0x%llx\n", vmgen.GenerationCount, vmgen.GenerationCountHigh);
 }
 
+static void dump_cpuid(unsigned int initflag) {
+    int regs[4];
+    __cpuid(regs, initflag);
+    printf("%08lx = %08lx %08lx %08lx %08lx\n", initflag, regs[0], regs[1], regs[2], regs[3]);
+    unsigned int max = regs[0];
+    for (unsigned int leaf = initflag + 1; leaf <= max; leaf++) {
+        __cpuid(regs, leaf);
+        printf("%08lx = %08lx %08lx %08lx %08lx\n", leaf, regs[0], regs[1], regs[2], regs[3]);
+    }
+}
+
+static void do_cpuid() {
+    dump_cpuid(0);
+    dump_cpuid(0x40000000);
+    dump_cpuid(0x80000000);
+}
+
 int wmain(int argc, wchar_t** argv) {
     int ret = 0;
 
@@ -89,6 +107,9 @@ int wmain(int argc, wchar_t** argv) {
         }
         else if (!_wcsicmp(argv[1], L"read_vmgen")) {
             do_read_vmgen();
+        }
+        else if (!_wcsicmp(argv[1], L"cpuid")) {
+            do_cpuid();
         }
         else {
             throw std::exception("unknown command");
